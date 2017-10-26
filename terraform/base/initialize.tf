@@ -27,7 +27,6 @@ module "cluster"{
   vpc_id        = "${module.vpc.vpc_id}"
   subnet_ids    = ["${module.vpc.public_subnet_ids}"]
   instance_type = "${var.cluster_instance_type}"
-  instance_key  = "${aws_key_pair.ssh_key_for_cluster.key_name}"
 }
 
 
