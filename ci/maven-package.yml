@@ -3,7 +3,8 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: maven:alpine
+    repository: maven
+    tag: alpine
 
 inputs:
   - name: git-repo
@@ -13,5 +14,5 @@ inputs:
 #    path: git-repo/target/
 
 run:
-  path: mvn
-  args: ["-f", "git-repo/pom.xml", "package"]
+  path: echo
+  args: [hello world]
