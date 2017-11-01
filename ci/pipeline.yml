@@ -17,7 +17,7 @@ jobs:
     - aggregate:
       - get: git-repo
         trigger: true
-      - get: time
+      - get: every-60s
     - task: maven-package
       privileged: true
       file: git-repo/ci/maven-package.yml
