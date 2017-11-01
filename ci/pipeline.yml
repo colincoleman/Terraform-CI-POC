@@ -1,0 +1,23 @@
+resources:
+  - name: git-repo
+    type: git
+    source:
+      uri: https://github.com/colincoleman/Terraform-CI-POC.git
+      branch: master
+      private_key: ((telia-terraform-ci-poc-deploy-key))
+  - name: every-60s
+    type: time
+    source:
+      interval: 60s
+
+
+jobs:
+  - name: maven-package
+    plan:
+    - aggregate:
+      - get: git-repo
+        trigger: true
+      - get: time
+    - task: maven-package
+      privileged: true
+      file: git-repo/ci/maven-package.yml
