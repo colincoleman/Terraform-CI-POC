@@ -15,4 +15,4 @@ inputs:
 
 run:
   path: mvn
-  args: ["-f", "git-repo/pom.xml", "-DskipTests=true", "test"]
+  args: ["-f", "git-repo/pom.xml", "test"]
