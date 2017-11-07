@@ -12,7 +12,7 @@ resources:
 
 
 jobs:
-  - name: maven-package
+  - name: maven-deploy
     plan:
     - aggregate:
       - get: git-repo
@@ -20,4 +20,4 @@ jobs:
       - get: every-60s
     - task: maven-package
       privileged: true
-      file: git-repo/ci/maven-package.yml
+      file: git-repo/ci/maven-deploy.yml

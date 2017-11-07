@@ -8,6 +8,73 @@
     <artifactId>ratpacktest</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+
+    <scm>
+        <developerConnection>scm:git:git@github.com:colincoleman/Terraform-CI-POC.git</developerConnection>
+        <connection>scm:git:git@github.com:colincoleman/Terraform-CI-POC.git</connection>
+        <url>https://github.com/colincoleman/Terraform-CI-POC</url>
+        <tag>HEAD</tag>
+    </scm>
+
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>telia-iot-releases</id>
+            <name>telia-iot-releases</name>
+            <url>https://nexus.iot.awsm.works/repository/telia-iot-releases/</url>
+        </repository>
+        <repository>
+            <id>telia-iot-snapshots</id>
+            <name>telia-iot-snapshots</name>
+            <url>https://nexus.iot.awsm.works/repository/telia-iot-snapshots/</url>
+        </repository>
+        <repository>
+            <id>cantara-proxy-releases</id>
+            <name>cantara-proxy-releases</name>
+            <url>https://nexus.iot.awsm.works/repository/cantara-releases/</url>
+        </repository>
+        <repository>
+            <id>cantara-proxy-snapshots</id>
+            <name>cantara-proxy-snapshots</name>
+            <url>https://nexus.iot.awsm.works/repository/cantara-snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>cantara-releases</id>
+            <name>cantara-releases</name>
+            <url>http://mvnrepo.cantara.no/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>cantara-snapshots</id>
+            <name>cantara-snapshots</name>
+            <url>http://mvnrepo.cantara.no/content/repositories/snapshots/</url>
+        </repository>
+
+
+
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>telia-iot-releases</id>
+            <name>telia-iot-releases</name>
+            <url>https://nexus.iot.awsm.works/repository/telia-iot-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>telia-iot-snapshots</id>
+            <name>telia-iot-snapshots</name>
+            <url>https://nexus.iot.awsm.works/repository/telia-iot-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
     <build>
         <pluginManagement>
             <plugins>
@@ -138,16 +205,6 @@
 
         </plugins>
     </build>
-
-    <repositories>
-    <repository>
-        <id>central</id>
-        <url>http://repo1.maven.org/maven2/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-    </repository>
-</repositories>
 
     <pluginRepositories>
         <pluginRepository>

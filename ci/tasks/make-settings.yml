@@ -1,0 +1,17 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+    tag: 3.6
+
+inputs:
+  - name: git-repo
+
+params:
+  nexus-deploy-username: ((telia-nexus-iot-deploy-username))
+  nexus-deploy-password: ((telia-nexus-iot-deploy-password))
+
+run:
+  path: gitrepo/ci/tasks/make-settings-and-maven-deploy.sh
