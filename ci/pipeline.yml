@@ -19,6 +19,7 @@ jobs:
         trigger: true
       - get: every-60s
     - task: make-settings
+      privileged: true
       file: git-repo/ci/tasks/make-settings.yml
     - task: maven-deploy
       privileged: true
