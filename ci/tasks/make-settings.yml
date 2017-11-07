@@ -9,9 +9,7 @@ image_resource:
 inputs:
   - name: git-repo
 
-params:
-  nexus-deploy-username: ((telia-nexus-iot-deploy-username))
-  nexus-deploy-password: ((telia-nexus-iot-deploy-password))
+
 
 run:
   path: echo
