@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > "settings.xml" <<EOF
+cat > "settings/settings.xml" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
 	<servers>
@@ -17,4 +17,4 @@ cat > "settings.xml" <<EOF
 </settings>
 EOF
 echo "Settings xml written"
-cat settings.xml
+cat settings/settings.xml

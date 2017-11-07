@@ -3,11 +3,14 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: alpine
-    tag: "3.6"
+    repository: golang
+    tag: "1.6"
 
 inputs:
   - name: git-repo
+
+outputs:
+  -name: settings
 
 params:
   nexus-deploy-username: ((telia-nexus-iot-deploy-username))
