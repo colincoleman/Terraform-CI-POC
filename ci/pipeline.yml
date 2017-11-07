@@ -18,8 +18,8 @@ jobs:
       - get: git-repo
         trigger: true
       - get: every-60s
-    - task: make-settings
-      file: /git-repo/ci/tasks/make-settings.yml
+#    - task: make-settings
+#      file: /git-repo/ci/tasks/make-settings.yml
     - task: maven-deploy
       privileged: true
       file: /git-repo/ci/tasks/maven-deploy.yml
