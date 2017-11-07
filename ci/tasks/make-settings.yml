@@ -14,4 +14,10 @@ params:
   nexus-deploy-password: ((telia-nexus-iot-deploy-password))
 
 run:
-  path: git-repo/ci/tasks/make-settings.sh
+#  path: git-repo/ci/tasks/make-settings.sh
+  path: sh
+    args:
+    - -exc
+    - |
+      cat git-repo/ci/tasks/make-settings.sh
+      git-repo/ci/tasks/make-settings.sh
