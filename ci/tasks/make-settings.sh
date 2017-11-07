@@ -28,4 +28,3 @@ cat > "${M2_HOME}/settings.xml" <<EOF
 EOF
 echo "Settings xml written"
 cat ${M2_HOME}/settings.xml
-mvn -f git-repo/pom.xml test
