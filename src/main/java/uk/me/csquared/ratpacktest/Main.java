@@ -11,7 +11,7 @@ public class Main {
                 .handlers(chain -> chain
                         .get(ctx -> ctx.render("Hello World"))
                         .get(":name", ctx -> ctx.render("Hello " +
-                                ctx.getPathTokens().get("name") + "!"))
+                                ctx.getPathTokens().get("name!") + "!"))
                 )
         );
 
