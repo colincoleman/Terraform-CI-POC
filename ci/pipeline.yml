@@ -20,4 +20,4 @@ jobs:
       - get: every-60s
     - task: maven-package
       privileged: true
-      file: /git-repo/ci/make-settings.yml
+      file: /git-repo/ci/tasks/make-settings.yml
