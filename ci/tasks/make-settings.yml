@@ -14,4 +14,4 @@ params:
   nexus-deploy-password: ((telia-nexus-iot-deploy-password))
 
 run:
-  path: gitrepo/ci/tasks/make-settings-and-maven-deploy.sh
+  path: /gitrepo/ci/tasks/make-settings-and-maven-deploy.sh
