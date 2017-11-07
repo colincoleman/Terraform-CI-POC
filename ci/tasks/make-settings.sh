@@ -17,4 +17,3 @@ cat > "settings/settings.xml" <<EOF
 </settings>
 EOF
 echo "Settings xml written"
-cat settings/settings.xml

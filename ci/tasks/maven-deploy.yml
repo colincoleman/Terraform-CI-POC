@@ -8,6 +8,7 @@ image_resource:
 
 inputs:
   - name: git-repo
+  - name: settings
 
 
 #outputs:
@@ -16,4 +17,4 @@ inputs:
 
 run:
   path: mvn
-  args: ["-f", "git-repo/pom.xml", "test"]
+  args: ["-f", "git-repo/pom.xml", "--settings", "settings/settings.xml", "test"]
