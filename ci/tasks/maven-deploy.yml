@@ -17,4 +17,4 @@ inputs:
 
 run:
   path: mvn
-  args: ["-f", "git-repo/pom.xml", "--settings", "settings/settings.xml", "test"]
+  args: ["-f", "git-repo/pom.xml", "--settings", "settings/settings.xml", "deploy"]
