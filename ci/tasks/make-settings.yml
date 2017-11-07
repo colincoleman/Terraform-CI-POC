@@ -13,8 +13,8 @@ outputs:
   - name: settings
 
 params:
-  nexus-deploy-username: ((telia-nexus-iot-deploy-username))
-  nexus-deploy-password: ((telia-nexus-iot-deploy-password))
+  nexusDeployUsername: ((telia-nexus-iot-deploy-username))
+  nexusDeployPassword: ((telia-nexus-iot-deploy-password))
 
 run:
   path: git-repo/ci/tasks/make-settings.sh

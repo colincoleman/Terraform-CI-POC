@@ -5,13 +5,13 @@ cat > "settings/settings.xml" <<EOF
 	<servers>
         <server>
             <id>telia-iot-releases</id>
-            <username>$nexus-deploy-username</username>
-            <password>$nexus-deploy-password</password>
+            <username>$nexusDeployUsername</username>
+            <password>$nexusDeployPassword</password>
         </server>
         <server>
             <id>telia-iot-snapshots</id>
-            <username>$nexus-deploy-username</username>
-            <password>$nexus-deploy-password</password>
+            <username>$nexusDeployUsername</username>
+            <password>$nexusDeployPassword</password>
         </server>
 	</servers>
 </settings>
