@@ -1,0 +1,14 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+    tag: "3.6"
+
+inputs:
+  - name: git-repo
+
+
+run:
+  path: git-repo/ci/tasks/docker-build.sh
