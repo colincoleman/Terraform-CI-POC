@@ -10,11 +10,6 @@ inputs:
   - name: git-repo
   - name: settings
 
-
-outputs:
-  - name: jar-file
-    path: git-repo/target/
-
 run:
   path: mvn
   args: ["-f", "git-repo/pom.xml", "--settings", "settings/settings.xml", "deploy"]
