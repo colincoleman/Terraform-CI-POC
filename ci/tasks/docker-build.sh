@@ -1,7 +1,7 @@
 #!/bin/sh
 #set -e
 cd
-ls
+echo `ls`
 #cp -p "../target/$(ls -t ../target/*.jar | grep -v /orig | head -1)" app.jar
 
 #docker build -t terraform-ci-poc .
