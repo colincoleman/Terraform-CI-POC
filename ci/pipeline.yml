@@ -25,5 +25,6 @@ jobs:
       privileged: true
       file: git-repo/ci/tasks/maven-deploy.yml
     - task: docker-build-and-deploy
+      privileged: true
       file: git-repo/ci/tasks/docker-build.yml
 
