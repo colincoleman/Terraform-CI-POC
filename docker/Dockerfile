@@ -28,8 +28,8 @@ RUN mkdir -p $HOME/logs && \
     chown -R $USER $HOME
 
 ## Expose application port
-EXPOSE 8080
+EXPOSE 5050
 
 USER $USER
 WORKDIR /home/$USER
-CMD ["./runapp.sh"]
+CMD ["java -jar app.jar"]
