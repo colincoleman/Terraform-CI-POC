@@ -26,4 +26,3 @@ jobs:
       file: git-repo/ci/tasks/maven-deploy.yml
     - task: docker-build-and-deploy
       file: git-repo/ci/tasks/docker-build.yml
-

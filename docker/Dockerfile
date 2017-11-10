@@ -32,4 +32,4 @@ EXPOSE 5050
 
 USER $USER
 WORKDIR /home/$USER
-CMD ["java -jar app.jar"]
+CMD ["./java -jar app.jar"]
