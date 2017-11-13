@@ -20,9 +20,9 @@ jobs:
       - get: every-60s
     - task: make-settings
       privileged: true
-      file: git-repo/ci/tasks/make-settings.yml
+      file: git-repo/ci/tasks/make-settings/task.yml
     - task: maven-deploy
       privileged: true
-      file: git-repo/ci/tasks/maven-deploy.yml
+      file: git-repo/ci/tasks/maven-deploy/task.yml
     - task: docker-build-and-deploy
-      file: git-repo/ci/tasks/docker-build.yml
+      file: git-repo/ci/tasks/docker-build/task.yml

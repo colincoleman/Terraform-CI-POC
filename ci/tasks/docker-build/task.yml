@@ -11,4 +11,4 @@ inputs:
 
 
 run:
-  path: git-repo/ci/tasks/docker-build.sh
+  path: git-repo/ci/tasks/docker-build/task.sh
