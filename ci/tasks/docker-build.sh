@@ -1,7 +1,7 @@
 #!/bin/sh
 #set -e
-cd
-echo `ls`
+
+echo `pwd`
 echo "hello"
 #cp -p "../target/$(ls -t ../target/*.jar | grep -v /orig | head -1)" app.jar
 
