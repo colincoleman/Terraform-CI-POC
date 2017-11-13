@@ -1,0 +1,21 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: maven
+    tag: alpine
+
+inputs:
+  - name: git-repo
+  - name: settings
+
+caches:
+  - path: .m2/
+
+#outputs:
+#  - name: jar-file
+#    path: git-repo/target/
+
+run:
+  path: git-repo/ci/tasks/maven-deploy/task.sh
