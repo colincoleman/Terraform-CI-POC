@@ -13,9 +13,9 @@ inputs:
 caches:
   - path: .m2/
 
-#outputs:
-#  - name: jar-file
-#    path: git-repo/target/
+outputs:
+  - name: jar-file
+    path: jar-file/
 
 run:
   path: git-repo/ci/tasks/maven-deploy/task.sh
