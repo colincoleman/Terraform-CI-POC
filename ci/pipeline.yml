@@ -5,11 +5,6 @@ resources:
       uri: https://github.com/colincoleman/Terraform-CI-POC.git
       branch: master
       private_key: ((telia-terraform-ci-poc-deploy-key))
-  - name: every-60s
-    type: time
-    source:
-      interval: 60s
-
 
 jobs:
   - name: maven-deploy
