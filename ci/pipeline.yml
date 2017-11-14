@@ -12,7 +12,6 @@ jobs:
     - aggregate:
       - get: git-repo
         trigger: true
-      - get: every-60s
     - task: make-settings
       privileged: true
       file: git-repo/ci/tasks/make-settings/task.yml
