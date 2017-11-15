@@ -1,6 +1,6 @@
 #!/bin/sh
 #set -e
-cp -p "jar-file/app.jar" git-repo/docker/app.jar
+cp -p "jar-file/app.jar" git-repo/docker/toRoot/app.jar
 echo `pwd`
 echo "hello"
 cd git-repo/docker
