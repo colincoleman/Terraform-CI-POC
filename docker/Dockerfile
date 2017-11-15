@@ -19,7 +19,7 @@ RUN apk add --update \
   update-ca-certificates && \
   adduser -S $USER
 
-COPY toRoot/*   $HOME/
+COPY toRoot/*  $HOME/
 
 ## Create directory for holding application logs and configure permissions
 ## Configure permissions
