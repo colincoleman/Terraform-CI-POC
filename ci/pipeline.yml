@@ -30,6 +30,6 @@ jobs:
     - task: docker-build-and-deploy
       privileged: true
       file: git-repo/ci/tasks/prepare-docker/task.yml
-    - put: this-docker-image
+    - put: terraform-ci-poc-docker-image
       params:
         build: git-repo/docker
