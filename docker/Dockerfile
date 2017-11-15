@@ -8,7 +8,7 @@ RUN apk add --update \
     ca-certificates \
     ca-certificates wget \
     groff \
-    python \
+    python
     python-dev \
     py2-pip \
     bash && \
@@ -19,7 +19,7 @@ RUN apk add --update \
   update-ca-certificates && \
   adduser -S $USER
 
-COPY toRoot/* app.jar  $HOME/
+COPY toRoot/*  $HOME/
 
 ## Create directory for holding application logs and configure permissions
 ## Configure permissions
