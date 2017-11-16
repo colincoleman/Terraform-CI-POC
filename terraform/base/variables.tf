@@ -15,5 +15,5 @@ variable "vpc-cidr_block" {
 variable "cluster_instance_type" {
 }
 variable "repository_uri" {
-  default="arn:aws:ecr:eu-west-1:752583717420:repository/terraform-ci-poc"
+  default="752583717420.dkr.ecr.eu-west-1.amazonaws.com/terraform-ci-poc"
 }
