@@ -32,4 +32,5 @@ jobs:
       file: git-repo/ci/tasks/prepare-docker/task.yml
     - put: terraform-ci-poc-docker-image
       params:
-        build: git-repo/docker
+        build: docker-folder
+        skip_download: true
