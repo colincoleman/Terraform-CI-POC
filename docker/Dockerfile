@@ -32,4 +32,4 @@ EXPOSE 5050
 
 USER $USER
 WORKDIR /home/$USER
-CMD ["runapp.sh"]
+CMD ["./runapp.sh"]
