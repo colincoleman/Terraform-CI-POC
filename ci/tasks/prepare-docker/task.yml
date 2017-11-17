@@ -12,6 +12,7 @@ inputs:
 
 outputs:
   - name: docker-folder
+    path: docker-folder/
 
 run:
   path: git-repo/ci/tasks/prepare-docker/task.sh
