@@ -10,6 +10,8 @@ inputs:
   - name: git-repo
   - name: jar-file
 
+outputs:
+  - name: docker-folder
 
 run:
   path: git-repo/ci/tasks/prepare-docker/task.sh
