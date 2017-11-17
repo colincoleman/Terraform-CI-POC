@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar app.jar
+/usr/bin/java -jar app.jar
