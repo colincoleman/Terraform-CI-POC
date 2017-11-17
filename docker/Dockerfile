@@ -32,4 +32,4 @@ EXPOSE 5050
 
 USER $USER
 WORKDIR /home/$USER
-CMD ["/usr/bin/java -jar app.jar"]
+CMD ["runapp.sh"]
