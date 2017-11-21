@@ -14,8 +14,8 @@ outputs:
   - name: docker-folder
 
 params:
-  nexusDeployUsername: ((telia-nexus-iot-deploy-username))
-  nexusDeployPassword: ((telia-nexus-iot-deploy-password))
+  nexusSnapshotDeployUsername: ((nexus-iot-snapshot-deploy.username))
+  nexusShapshotDeployPassword: ((nexus-iot-snapshot-deploy.password))
 
 run:
   path: git-repo/ci/tasks/make-settings/task.sh

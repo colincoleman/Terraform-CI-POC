@@ -10,13 +10,13 @@ cat > "settings/settings.xml" <<EOF
 	<servers>
         <server>
             <id>telia-iot-releases</id>
-            <username>$nexusDeployUsername</username>
-            <password>$nexusDeployPassword</password>
+            <username>$nexusSnapshotDeployUsername</username>
+            <password>$nexusShapshotDeployPassword</password>
         </server>
         <server>
             <id>telia-iot-snapshots</id>
-            <username>$nexusDeployUsername</username>
-            <password>$nexusDeployPassword</password>
+            <username>$nexusSnapshotDeployUsername</username>
+            <password>$nexusShapshotDeployPassword</password>
         </server>
 	</servers>
 	<localRepository>${M2_LOCAL_REPO}/repository</localRepository>
