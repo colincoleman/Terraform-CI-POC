@@ -21,6 +21,15 @@ module "alb" {
   subnet_ids    = ["${module.vpc.public_subnet_ids}"]
 }
 
+resource "aws_security_group_rule" "ingress_443" {
+  security_group_id = "${module.alb.security_group_id}"
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = "443"
+  to_port           = "443"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 module "cluster"{
   source = "github.com/itsdalmo/tf-modules//container/cluster?ref=0.1.0"
   prefix        = "${var.env-name}-${var.project-name}"
