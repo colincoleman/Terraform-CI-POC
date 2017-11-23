@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "${var.region}"
-}
-
 module "vpc" {
   source        = "github.com/itsdalmo/tf-modules//ec2/vpc?ref=0.1.0"
   prefix        = "${var.env-name}-${var.project-name}"

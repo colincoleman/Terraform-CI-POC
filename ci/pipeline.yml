@@ -34,3 +34,6 @@ jobs:
       params:
         build: docker-folder/docker
         skip_download: true
+    - task: taint-task-definition
+      file: git-repo/ci/tasks/taint-task-definition/task.yml
+    - task: terraform-apply
