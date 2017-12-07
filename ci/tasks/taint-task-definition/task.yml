@@ -1,0 +1,13 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: hashicorp/terraform
+    tag: "0.11.1"
+
+inputs:
+  - name: git-repo
+
+run:
+  path: git-repo/ci/tasks/taint-task-definition/task.sh
