@@ -37,3 +37,4 @@ jobs:
     - task: taint-task-definition
       file: git-repo/ci/tasks/taint-task-definition/task.yml
     - task: terraform-apply
+      file: git-repo/ci/tasks/terraform-apply/task.yml
