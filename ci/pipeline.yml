@@ -2,7 +2,7 @@ resources:
   - name: git-repo
     type: git
     source:
-      uri: https://github.com/colincoleman/Terraform-CI-POC.git
+      uri: git@github.com:colincoleman/Terraform-CI-POC.git
       branch: master
       private_key: ((terraform-ci-poc-git-deploy-key))
 
