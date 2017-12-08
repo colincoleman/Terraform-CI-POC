@@ -5,7 +5,7 @@ terraform {
   required_version = "0.11.1"
 
   backend "s3" {
-    key            = "terraform-ci-poc/terraform-ci-poc.tfstate"
+    key            = "xqb/terraform-ci-poc.tfstate"
     bucket         = "276208424594-terraform-state"
     dynamodb_table = "276208424594-terraform-state"
     acl            = "bucket-owner-full-control"
