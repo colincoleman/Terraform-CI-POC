@@ -36,8 +36,8 @@ jobs:
         skip_download: true
     - task: taint-task-definition
       params:
-        AWS_ACCESS_KEY_ID: abcdefg
-        AWS_SECRET_ACCESS_KEY: hijklmnop
+        AWS_ACCESS_KEY_ID: ((xqb-ci-deploy-access-key-id))
+        AWS_SECRET_ACCESS_KEY: ((xqb-ci-deploy-secret-access-key))
       file: git-repo/ci/tasks/taint-task-definition/task.yml
     - task: terraform-apply
       params:
