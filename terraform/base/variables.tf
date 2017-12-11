@@ -17,3 +17,11 @@ variable "cluster_instance_type" {
 variable "repository_uri" {
   default="752583717420.dkr.ecr.eu-west-1.amazonaws.com/terraform-ci-poc"
 }
+
+variable "tags" {
+  type = "map"
+  default = {
+    terraform   = "True"
+    environment = "dev"
+  }
+}

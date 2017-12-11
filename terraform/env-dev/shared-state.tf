@@ -6,7 +6,7 @@ terraform {
 
   backend "s3" {
     key            = "xqb/terraform-ci-poc.tfstate"
-    bucket         = "colin-test-terraform-state"
+    bucket         = "276208424594-terraform-state"
     dynamodb_table = "276208424594-terraform-state"
     acl            = "bucket-owner-full-control"
     encrypt        = "true"
