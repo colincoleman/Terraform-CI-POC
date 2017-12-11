@@ -123,7 +123,7 @@ resource "aws_alb_listener" "https" {
 }
 
 data "aws_route53_zone" "iot-zone" {
-  name         = "iot.telia.io."
+  name         = "staging.api.ss.telia.io"
   private_zone = false
 }
 
