@@ -1,28 +1,31 @@
 module "vpc" {
-  source        = "github.com/TeliaSoneraNorge/divx-terraform-modules//ec2/vpc?ref=0.2.6"
+  source        = "github.com/itsdalmo/tf-modules//ec2/vpc?ref=0.1.0"
   prefix        = "${var.env-name}-${var.project-name}"
   cidr_block    = "${var.vpc-cidr_block}"
-  private_subnets = "3"
   dns_hostnames = "true"
 
-  tags = "${var.tags}"
+  tags{
+    environment = "${var.env-name}"
+    terraform   = "true"
+  }
+}
+module "alb" {
+  source        = "github.com/itsdalmo/tf-modules//ec2/alb?ref=0.1.0"
+  prefix        = "${var.env-name}-${var.project-name}"
+  internal      = "false"
+  vpc_id        = "${module.vpc.vpc_id}"
+  subnet_ids    = ["${module.vpc.public_subnet_ids}"]
 }
 
-module "lb" {
-  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//ec2/lb?ref=0.2.6"
 
-  prefix     = "${var.env-name}-${var.project-name}"
-  type       = "application"
-  internal   = "false"
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = ["${module.vpc.private_subnet_ids}"]
-
-  tags = "${var.tags}"
+resource "null_resource" "alb_exists" {
+  triggers {
+    alb_name = "${module.alb.arn}"
+  }
 }
-
 
 resource "aws_security_group_rule" "ingress_443" {
-  security_group_id = "${module.lb.security_group_id}"
+  security_group_id = "${module.alb.security_group_id}"
   type              = "ingress"
   protocol          = "tcp"
   from_port         = "443"
@@ -31,46 +34,16 @@ resource "aws_security_group_rule" "ingress_443" {
 }
 
 module "cluster"{
-  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/cluster?ref=0.2.6"
+  source = "github.com/itsdalmo/tf-modules//container/cluster?ref=0.1.0"
   prefix        = "${var.env-name}-${var.project-name}"
   vpc_id        = "${module.vpc.vpc_id}"
-  subnet_ids    = ["${module.vpc.private_subnet_ids}"]
-  ingress_length = 1
-  ingress {
-    "0" = "${module.lb.security_group_id}"
-  }
-  tags = "${var.tags}"
+  subnet_ids    = ["${module.vpc.public_subnet_ids}"]
   instance_type = "${var.cluster_instance_type}"
 }
 
 resource "aws_cloudwatch_log_group" "main" {
   name = "${var.project-name}-${var.env-name}"
 }
-
-module "target" {
-  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/target?ref=0.2.6"
-
-  prefix            = "${var.env-name}-${var.project-name}"
-  vpc_id            = "${module.vpc.vpc_id}"
-  load_balancer_arn = "${module.lb.arn}"
-
-  target {
-    protocol = "HTTP"
-    port     = "5050"
-    health   = "HTTP:traffic-port/"
-  }
-
-  listeners = [{
-    protocol = "HTTPS"
-    port     = "443"
-  }]
-
-  tags = "${var.tags}"
-}
-
-
-
-
 
 
 resource "aws_ecs_task_definition" "terraform-ci-poc" {
@@ -102,27 +75,59 @@ EOF
 }
 
 module "terraform-ci-service" {
-  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/service?ref=0.2.6"
+  source = "github.com/baardl/tf-modules//container/service"
 
-  prefix             = "${var.project-name}"
-  cluster_id         = "${module.cluster.id}"
-  cluster_role       = "${module.cluster.role_id}"
-  task_definition    = "${aws_ecs_task_definition.terraform-ci-poc.arn}"
+  prefix = "${var.project-name}"
+  environment = "${var.env-name}"
+  vpc_id = "${module.vpc.vpc_id}"
+  cluster_id = "${module.cluster.id}"
+  cluster_sg = "${module.cluster.security_group_id}"
+  cluster_role = "${module.cluster.role_id}"
+  load_balancer_name = "${module.alb.name}"
+  load_balancer_sg = "${module.alb.security_group_id}"
+  task_definition = "${aws_ecs_task_definition.terraform-ci-poc.arn}"
   task_log_group_arn = "${aws_cloudwatch_log_group.main.arn}"
-  container_count    = "2"
+  target_group_arn = "${aws_alb_target_group.terraform-ci-poc-tg.arn}"
+  container_count = "1"
 
-  load_balancer {
-    target_group_arn = "${module.target.target_group_arn}"
-    container_name   = "${var.env-name}-${var.project-name}"
-    container_port   = "${module.target.container_port}"
+  port_mapping = {
+    "5050" = "5050"
   }
-
-  tags = "${var.tags}"
 }
 
+resource "aws_alb_target_group" "terraform-ci-poc-tg" {
+  depends_on = ["null_resource.alb_exists"]
+  name     = "${var.project-name}-tg"
+  port     = 5050
+  protocol = "HTTP"
+  vpc_id   = "${module.vpc.vpc_id}"
+  health_check = {
+    interval  = 30,
+    path      = "/",
+    port      = "traffic-port",
+    protocol  = "HTTP",
+    timeout   = 5,
+    healthy_threshold = 5,
+    unhealthy_threshold = 2,
+    matcher   = "200,202"
+  }
+}
 
 variable "certificate_arn" {
   default = "arn:aws:acm:eu-west-1:752583717420:certificate/f32438bb-e112-4b68-bb1e-fc6a713e576d"
+}
+
+resource "aws_alb_listener" "https" {
+  load_balancer_arn = "${module.alb.arn}"
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2015-05"
+  certificate_arn   = "${var.certificate_arn}"
+
+  default_action {
+    target_group_arn = "${aws_alb_target_group.terraform-ci-poc-tg.arn}"
+    type             = "forward"
+  }
 }
 
 data "aws_route53_zone" "iot-zone" {
@@ -135,7 +140,16 @@ resource "aws_route53_record" "terraform-ci-poc" {
   name    = "${var.env-name}-terraform-ci-poc.${data.aws_route53_zone.iot-zone.name}"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${module.lb.dns_name}"]
+  records = ["${module.alb.dns_name}"]
+}
+
+resource "aws_security_group_rule" "dynamic_port_mapping" {
+  type                     = "ingress"
+  security_group_id        = "${module.cluster.security_group_id}"
+  protocol                 = "tcp"
+  from_port                = 32768
+  to_port                  = 65535
+  source_security_group_id = "${module.alb.security_group_id}"
 }
 
 resource "aws_key_pair" "ssh_key_for_cluster" {
@@ -146,7 +160,7 @@ module "bastion" {
   source      = "github.com/itsdalmo/tf-modules//bastion"
   prefix      = "${var.env-name}-${var.project-name}"
   vpc_id      = "${module.vpc.vpc_id}"
-  subnet_ids  = "${module.vpc.private_subnet_ids}"
+  subnet_ids  = "${module.vpc.public_subnet_ids}"
   pem_bucket  = "tn-lab-config"
   pem_path    = "${var.env-name}-${var.project-name}.pem"
 
@@ -159,5 +173,8 @@ module "bastion" {
     "0.0.0.0/0",
   ]
 
-  tags = "${var.tags}"
+  tags {
+    terraform   = "true"
+    environment = "${var.env-name}"
+  }
 }
