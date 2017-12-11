@@ -1,4 +1,5 @@
 #!/bin/sh
 cd git-repo/terraform/env-dev
 terraform init
-terraform apply
+teraform plan
+#terraform apply
