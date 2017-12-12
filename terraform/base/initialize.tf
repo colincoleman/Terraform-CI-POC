@@ -114,7 +114,7 @@ resource "aws_alb_target_group" "terraform-ci-poc-tg" {
 }
 
 variable "certificate_arn" {
-  default = "arn:aws:acm:eu-west-1:752583717420:certificate/f32438bb-e112-4b68-bb1e-fc6a713e576d"
+  default = "arn:aws:acm:eu-west-1:276208424594:certificate/b9ebb5a8-ffae-4d75-8492-2d19e573e7cf"
 }
 
 resource "aws_alb_listener" "https" {
