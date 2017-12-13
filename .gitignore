@@ -26,3 +26,9 @@ target
 dependency-reduced-pom.xml
 logs
 /bin
+
+# SNYK report files
+snyk-error.log
+snyk-result.json
+snyk_report.css
+snyk_report.html
