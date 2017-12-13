@@ -16,7 +16,7 @@ resources:
 
 
 jobs:
-  - name: maven-deploy
+  - name: deploy
     plan:
     - aggregate:
       - get: git-repo
@@ -45,3 +45,9 @@ jobs:
         AWS_ACCESS_KEY_ID: ((xqb-ci-deploy-access-key-id))
         WS_SECRET_ACCESS_KEY: ((xqb-ci-deploy-secret-access-key))
       file: git-repo/ci/tasks/terraform-apply/task.yml
+    - task: snyk
+      params:
+        SNYK_TOKEN: ((colin-snyk-token))
+      file: git-repo/ci/tasks/snyk/task.yml
+
+
