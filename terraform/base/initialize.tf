@@ -4,19 +4,19 @@ module "vpc" {
   cidr_block    = "${var.vpc-cidr_block}"
   dns_hostnames = "true"
 
-  tags{
+  tags {
     environment = "${var.env-name}"
     terraform   = "true"
   }
 }
-module "alb" {
-  source        = "github.com/itsdalmo/tf-modules//ec2/alb?ref=0.1.0"
-  prefix        = "${var.env-name}-${var.project-name}"
-  internal      = "false"
-  vpc_id        = "${module.vpc.vpc_id}"
-  subnet_ids    = ["${module.vpc.public_subnet_ids}"]
-}
 
+module "alb" {
+  source     = "github.com/itsdalmo/tf-modules//ec2/alb?ref=0.1.0"
+  prefix     = "${var.env-name}-${var.project-name}"
+  internal   = "false"
+  vpc_id     = "${module.vpc.vpc_id}"
+  subnet_ids = ["${module.vpc.public_subnet_ids}"]
+}
 
 resource "null_resource" "alb_exists" {
   triggers {
@@ -33,8 +33,8 @@ resource "aws_security_group_rule" "ingress_443" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
-module "cluster"{
-  source = "github.com/itsdalmo/tf-modules//container/cluster?ref=0.1.0"
+module "cluster" {
+  source        = "github.com/itsdalmo/tf-modules//container/cluster?ref=0.1.0"
   prefix        = "${var.env-name}-${var.project-name}"
   vpc_id        = "${module.vpc.vpc_id}"
   subnet_ids    = ["${module.vpc.public_subnet_ids}"]
@@ -45,9 +45,9 @@ resource "aws_cloudwatch_log_group" "main" {
   name = "${var.project-name}-${var.env-name}"
 }
 
-
 resource "aws_ecs_task_definition" "terraform-ci-poc" {
   family = "${var.project-name}"
+
   container_definitions = <<EOF
 [
   {
@@ -77,18 +77,18 @@ EOF
 module "terraform-ci-service" {
   source = "github.com/baardl/tf-modules//container/service"
 
-  prefix = "${var.project-name}"
-  environment = "${var.env-name}"
-  vpc_id = "${module.vpc.vpc_id}"
-  cluster_id = "${module.cluster.id}"
-  cluster_sg = "${module.cluster.security_group_id}"
-  cluster_role = "${module.cluster.role_id}"
+  prefix             = "${var.project-name}"
+  environment        = "${var.env-name}"
+  vpc_id             = "${module.vpc.vpc_id}"
+  cluster_id         = "${module.cluster.id}"
+  cluster_sg         = "${module.cluster.security_group_id}"
+  cluster_role       = "${module.cluster.role_id}"
   load_balancer_name = "${module.alb.name}"
-  load_balancer_sg = "${module.alb.security_group_id}"
-  task_definition = "${aws_ecs_task_definition.terraform-ci-poc.arn}"
+  load_balancer_sg   = "${module.alb.security_group_id}"
+  task_definition    = "${aws_ecs_task_definition.terraform-ci-poc.arn}"
   task_log_group_arn = "${aws_cloudwatch_log_group.main.arn}"
-  target_group_arn = "${aws_alb_target_group.terraform-ci-poc-tg.arn}"
-  container_count = "1"
+  target_group_arn   = "${aws_alb_target_group.terraform-ci-poc-tg.arn}"
+  container_count    = "1"
 
   port_mapping = {
     "5050" = "5050"
@@ -97,19 +97,20 @@ module "terraform-ci-service" {
 
 resource "aws_alb_target_group" "terraform-ci-poc-tg" {
   depends_on = ["null_resource.alb_exists"]
-  name     = "${var.project-name}-tg"
-  port     = 5050
-  protocol = "HTTP"
-  vpc_id   = "${module.vpc.vpc_id}"
+  name       = "${var.project-name}-tg"
+  port       = 5050
+  protocol   = "HTTP"
+  vpc_id     = "${module.vpc.vpc_id}"
+
   health_check = {
-    interval  = 30,
-    path      = "/",
-    port      = "traffic-port",
-    protocol  = "HTTP",
-    timeout   = 5,
-    healthy_threshold = 5,
-    unhealthy_threshold = 2,
-    matcher   = "200,202"
+    interval            = 30
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    matcher             = "200,202"
   }
 }
 
@@ -156,13 +157,14 @@ resource "aws_key_pair" "ssh_key_for_cluster" {
   key_name   = "${var.env-name}-${var.project-name}"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDgc2VhScUhekS3WYe1gF54W0Z0Hs0LZrpRopaEMdUmGkIIdlIMzUh/BVckneEtzy8nigkpoeEWf2n+kqFmYSlfUk5AvQZ9EIgwLuitjxqpCplOZQVB9TcMn2G3DLeb1VGl7YjvnsPZqQvS9ZHPO1j1+G5QNh12Bf8AjJlkfwxnza+zAeGac8mtncSTRcvoD0WxZ366VGOG2Lz+e5uLduxnDloxDF5QiAOsvrEnISVfCh33fYD//QhyqFwXqEVNmQq8iTEaU5ikRMIXikFssVygouGyhSl5BiQrwIuFn9eBMraSZCsgA0IM27sptN7cGVvkj9EkkPi3ewiW+JZu3jVx"
 }
+
 module "bastion" {
-  source      = "github.com/itsdalmo/tf-modules//bastion"
-  prefix      = "${var.env-name}-${var.project-name}"
-  vpc_id      = "${module.vpc.vpc_id}"
-  subnet_ids  = "${module.vpc.public_subnet_ids}"
-  pem_bucket  = "tn-lab-config"
-  pem_path    = "${var.env-name}-${var.project-name}.pem"
+  source     = "github.com/itsdalmo/tf-modules//bastion"
+  prefix     = "${var.env-name}-${var.project-name}"
+  vpc_id     = "${module.vpc.vpc_id}"
+  subnet_ids = "${module.vpc.public_subnet_ids}"
+  pem_bucket = "tn-lab-config"
+  pem_path   = "${var.env-name}-${var.project-name}.pem"
 
   authorized_keys = [
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjdPyZOoO1wvs3vuYwonsNHNIBkOc1GmxmwmygtfIxEs0CxJ/xD12BSNKX+YcwShY7Vi350JXg5kzoWNvru3i7BAz5SVoLsXJlyFnOaHqVzqY9Yfd3T0WM0gW/q/Jgl8nnu0HniNFWBlvaLkTmbBRa7bAsD7BydNYj8uaCXDiVMhJ/A8BLZZXgPKjWVFz31aTvqA4NF9ofXPh+oH5QK8WSG6lP01/do2Vk3wHoQC/yOex1B7mNv4pAfQboW4lriH18M/pnBrLTUuCURRxoioQ6zT7Zpz2h1GUBibeC1CwsLBSCY52ERLltjwwGqNG2VPKyA1/3vGxfJIU7sCkkmlUXD2Al+a6Z3WchJcd+fM0INhZ6454FCyqoEil4cxc78Qp20YQFjjm0q5YZhl1MuDEpi08OcredrwZ6Bo4ZlCypO0uVFNwg5KMWbYZa8PmNGUQKGnOdxykYlXTZvgI7ycZTaZodWYCBl3MGhe4NZoWEEomVnZSSIz+04jlL6DIZlkFm+VRE86xPW5Z8dsa+N8+x+9YPhw3nkeNs37Xc2PMbGj3rFs6c17B4zAk8aMCJSccVwUoXQPsfeTxkISeANZgKXBFqHLiA3pNj8cySeGnwG78SZV55jHYRsAAvOAVAwdQWZ0E4QJDsxDWJ9yXd0ouH0twdYtmvYzmQ7jeMZUhzdw== cc@csquared.me.uk",
