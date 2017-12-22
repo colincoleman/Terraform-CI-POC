@@ -9,7 +9,8 @@ image_resource:
 inputs:
   - name: git-repo
 
-params:
-  PROJECT_PATH: /git-repo
 run:
   path: git-repo/test
+
+params:
+  PROJECT_PATH: /git-repo
