@@ -10,7 +10,7 @@ inputs:
   - name: git-repo
 
 run:
-  path: git-repo/test
+  path: test
 
 params:
   PROJECT_PATH: /git-repo
