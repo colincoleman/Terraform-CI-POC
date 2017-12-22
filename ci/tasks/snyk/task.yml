@@ -9,5 +9,8 @@ image_resource:
 inputs:
   - name: git-repo
 
+params:
+  PROJECT_PATH: "/git-repo"
+
 run:
-  path: git-repo/ci/tasks/snyk/task.sh
+  path: git-repo/test
