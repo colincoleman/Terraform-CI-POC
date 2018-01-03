@@ -14,7 +14,7 @@ cat > "settings/settings.xml" <<EOF
             <password>$nexusShapshotDeployPassword</password>
         </server>
 	</servers>
-	<localRepository>${M2_LOCAL_REPO}/repository</localRepository>
+	<localRepository>.m2/repository</localRepository>
 </settings>
 EOF
 echo "Settings xml written"
