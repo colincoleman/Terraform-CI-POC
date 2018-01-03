@@ -1,5 +1,6 @@
 #!/bin/sh
 echo `ls -al`
+echo ${HOME}
 M2_HOME=${HOME}/.m2
 mkdir -p ${M2_HOME}
 M2_LOCAL_REPO="${ROOT_FOLDER}/.m2"
