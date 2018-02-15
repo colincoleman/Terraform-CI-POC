@@ -3,14 +3,14 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: snyk/snyk-cli
-    tag: "1.69.4-maven-3.5.2"
+    repository: colincoleman/snyk-for-concourse
+    tag: "maven-3.5.2"
 
 inputs:
   - name: git-repo
 
 run:
-  path: test
+  path: git-repo/ci/tasks/snyk/task.sh
 
 params:
   PROJECT_PATH: /git-repo
