@@ -10,8 +10,8 @@ inputs:
   - name: git-repo
 
 run:
-  path: ./test
+  path: git-repo/ci/tasks/snyk/task.sh
 
 params:
   PROJECT_PATH: /git-repo
-  SNYK_TOKEN: ((colin-snyk-token))
+  nexusSnapshotDeployUsername: ((colin-snyk-token))
