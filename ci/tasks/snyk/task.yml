@@ -10,7 +10,7 @@ inputs:
   - name: git-repo
 
 run:
-  path: git-repo/ci/tasks/snyk/task.sh
+  path: test
 
 params:
   PROJECT_PATH: /git-repo
