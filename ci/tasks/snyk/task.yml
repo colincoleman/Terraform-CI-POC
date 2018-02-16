@@ -14,3 +14,4 @@ run:
 
 params:
   PROJECT_PATH: /git-repo
+  SNYK_TOKEN: ((colin-snyk-token))
