@@ -1,2 +1,2 @@
 #!/bin/bash
-./docker-entrypoint test
+./docker-entrypoint.sh test
