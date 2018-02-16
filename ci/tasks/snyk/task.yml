@@ -13,5 +13,4 @@ run:
   path: git-repo/ci/tasks/snyk/task.sh
 
 params:
-  PROJECT_PATH: /git-repo
   nexusSnapshotDeployUsername: ((colin-snyk-token))
