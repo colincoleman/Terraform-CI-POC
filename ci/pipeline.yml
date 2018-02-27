@@ -10,12 +10,22 @@ resources:
     type: docker-image
     source:
       repository: 276208424594.dkr.ecr.eu-west-1.amazonaws.com/terraform-ci-poc
-      aws_access_key_id: ((xqb-ci-deploy-access-key-id))
-      aws_secret_access_key: ((xqb-ci-deploy-secret-access-key))
+      aws_access_key_id: ((telia-divx-xqb-dev-access-key))
+      aws_secret_access_key: ((telia-divx-xqb-dev-secret-key))
 
 
 
 jobs:
+  - name: test-dependencies
+    plan:
+    - aggregate:
+      - get: git-repo
+        trigger: true
+    - task: snyk
+      params:
+        SNYK_TOKEN: ((colinsnyktoken))
+      file: git-repo/ci/tasks/snyk/task.yml
+
   - name: deploy
     plan:
     - aggregate:
@@ -37,17 +47,14 @@ jobs:
       get_params: {skip_download: true}
     - task: taint-task-definition
       params:
-        AWS_ACCESS_KEY_ID: ((xqb-ci-deploy-access-key-id))
-        AWS_SECRET_ACCESS_KEY: ((xqb-ci-deploy-secret-access-key))
+        AWS_ACCESS_KEY_ID: ((telia-divx-xqb-dev-access-key))
+        AWS_SECRET_ACCESS_KEY: ((telia-divx-xqb-dev-secret-key))
       file: git-repo/ci/tasks/taint-task-definition/task.yml
     - task: terraform-apply
       params:
-        AWS_ACCESS_KEY_ID: ((xqb-ci-deploy-access-key-id))
-        WS_SECRET_ACCESS_KEY: ((xqb-ci-deploy-secret-access-key))
+        AWS_ACCESS_KEY_ID: ((telia-divx-xqb-dev-access-key))
+        WS_SECRET_ACCESS_KEY: ((telia-divx-xqb-dev-secret-key))
       file: git-repo/ci/tasks/terraform-apply/task.yml
-    - task: snyk
-      params:
-        SNYK_TOKEN: ((colin-snyk-token))
-      file: git-repo/ci/tasks/snyk/task.yml
+
 
 
