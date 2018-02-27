@@ -12,6 +12,7 @@ resources:
       repository: 653090749433.dkr.ecr.eu-west-1.amazonaws.com/terraform-ci-poc
       aws_access_key_id: ((telia-divx-xqb-dev-access-key))
       aws_secret_access_key: ((telia-divx-xqb-dev-secret-key))
+      AWS_SESSION_TOKEN: ((telia-divx-xqb-dev-session-token))
 
 
 
@@ -49,11 +50,13 @@ jobs:
       params:
         AWS_ACCESS_KEY_ID: ((telia-divx-xqb-dev-access-key))
         AWS_SECRET_ACCESS_KEY: ((telia-divx-xqb-dev-secret-key))
+        AWS_SESSION_TOKEN: ((telia-divx-xqb-dev-session-token))
       file: git-repo/ci/tasks/taint-task-definition/task.yml
     - task: terraform-apply
       params:
         AWS_ACCESS_KEY_ID: ((telia-divx-xqb-dev-access-key))
-        WS_SECRET_ACCESS_KEY: ((telia-divx-xqb-dev-secret-key))
+        AWS_SECRET_ACCESS_KEY: ((telia-divx-xqb-dev-secret-key))
+        AWS_SESSION_TOKEN: ((telia-divx-xqb-dev-session-token))
       file: git-repo/ci/tasks/terraform-apply/task.yml
 
 
