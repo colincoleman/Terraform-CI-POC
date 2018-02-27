@@ -24,12 +24,12 @@ resource "null_resource" "alb_exists" {
   }
 }
 
-resource "aws_security_group_rule" "ingress_443" {
+resource "aws_security_group_rule" "ingress_80" {
   security_group_id = "${module.alb.security_group_id}"
   type              = "ingress"
   protocol          = "tcp"
-  from_port         = "443"
-  to_port           = "443"
+  from_port         = "80"
+  to_port           = "80"
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
@@ -114,16 +114,18 @@ resource "aws_alb_target_group" "terraform-ci-poc-tg" {
   }
 }
 
+/*
 variable "certificate_arn" {
   default = "arn:aws:acm:eu-west-1:276208424594:certificate/b9ebb5a8-ffae-4d75-8492-2d19e573e7cf"
 }
+*/
 
 resource "aws_alb_listener" "https" {
   load_balancer_arn = "${module.alb.arn}"
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2015-05"
-  certificate_arn   = "${var.certificate_arn}"
+  port              = "80"
+  protocol          = "HTTP"
+#  ssl_policy        = "ELBSecurityPolicy-2015-05"
+#  certificate_arn   = "${var.certificate_arn}"
 
   default_action {
     target_group_arn = "${aws_alb_target_group.terraform-ci-poc-tg.arn}"
@@ -131,11 +133,14 @@ resource "aws_alb_listener" "https" {
   }
 }
 
+/*
 data "aws_route53_zone" "iot-zone" {
   name         = "staging.api.ss.telia.io"
   private_zone = false
 }
+*/
 
+/*
 resource "aws_route53_record" "terraform-ci-poc" {
   zone_id = "${data.aws_route53_zone.iot-zone.zone_id}"
   name    = "${var.env-name}-terraform-ci-poc.${data.aws_route53_zone.iot-zone.name}"
@@ -143,6 +148,7 @@ resource "aws_route53_record" "terraform-ci-poc" {
   ttl     = "300"
   records = ["${module.alb.dns_name}"]
 }
+*/
 
 resource "aws_security_group_rule" "dynamic_port_mapping" {
   type                     = "ingress"
