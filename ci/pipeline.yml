@@ -45,18 +45,12 @@ jobs:
         build: docker-folder/docker
         skip_download: true
       get_params: {skip_download: true}
-    - task: taint-task-definition
+    - task: deploy-to-dev
       params:
         AWS_ACCESS_KEY_ID: ((telia-divx-xqb-dev-access-key))
         AWS_SECRET_ACCESS_KEY: ((telia-divx-xqb-dev-secret-key))
         AWS_SESSION_TOKEN: ((telia-divx-xqb-dev-session-token))
-      file: git-repo/ci/tasks/taint-task-definition/task.yml
-    - task: terraform-apply
-      params:
-        AWS_ACCESS_KEY_ID: ((telia-divx-xqb-dev-access-key))
-        AWS_SECRET_ACCESS_KEY: ((telia-divx-xqb-dev-secret-key))
-        AWS_SESSION_TOKEN: ((telia-divx-xqb-dev-session-token))
-      file: git-repo/ci/tasks/terraform-apply/task.yml
+      file: git-repo/ci/tasks/deploy-to-dev/task.yml
 
 
 

@@ -10,4 +10,4 @@ inputs:
   - name: git-repo
 
 run:
-  path: git-repo/ci/tasks/terraform-apply/task.sh
+  path: git-repo/ci/tasks/deploy-to-dev/task.sh
