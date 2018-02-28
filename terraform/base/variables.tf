@@ -1,3 +1,8 @@
+variable "workshop-common-infrastructure-remote_state_bucket" {}
+variable "workshop-common-infrastructure-remote_state_region" {}
+variable "workshop-common-infrastructure-remote_state_key" {}
+variable "workshop-common-infrastructure-remote_state_kms_key_id" {}
+
 variable "region" {
   default = "eu-west-1"
 }

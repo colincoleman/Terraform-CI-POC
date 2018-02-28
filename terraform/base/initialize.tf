@@ -10,6 +10,18 @@ module "vpc" {
   }
 }
 
+data "terraform_remote_state" "workshop-common-infrastructure" {
+  backend = "s3"
+
+  config {
+    bucket     = "${var.workshop-common-infrastructure-remote_state_bucket}"
+    region     = "${var.workshop-common-infrastructure-remote_state_region}"
+    key        = "${var.workshop-common-infrastructure-remote_state_key}"
+    kms_key_id = "${var.workshop-common-infrastructure-remote_state_kms_key_id}}"
+  }
+}
+
+
 module "alb" {
   source     = "github.com/itsdalmo/tf-modules//ec2/alb?ref=0.1.0"
   prefix     = "${var.env-name}-${var.project-name}"

@@ -10,7 +10,7 @@ terraform {
     dynamodb_table = "653090749433-terraform-state"
     acl            = "bucket-owner-full-control"
     encrypt        = "true"
-    kms_key_id     = "arn:aws:kms:eu-west-1:276208424594:key/90b6fd6f-925c-4426-88e6-214955de0030"
+    kms_key_id     = "arn:aws:kms:eu-west-1:653090749433:key/ba4a73a8-a71f-4fda-8457-d7a43886f19e"
     region         = "eu-west-1"
   }
 }
