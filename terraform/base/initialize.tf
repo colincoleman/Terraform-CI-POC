@@ -29,7 +29,7 @@ resource "aws_security_group_rule" "ingress_80" {
 }
 
 module "cluster" {
-  source         = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/cluster?ref=091b7a1"
+  source         = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/cluster"
   prefix         = "${var.env-name}-${var.project-name}"
   vpc_id         = "${data.terraform_remote_state.workshop-common-infrastructure.vpc_id}"
   subnet_ids     = ["${data.terraform_remote_state.workshop-common-infrastructure.vpc_private_subnet_ids}"]
@@ -78,7 +78,7 @@ EOF
 }
 
 module "terraform-ci-service" {
-  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/service?ref=091b7a1"
+  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/service"
 
   prefix             = "${var.env-name}-${var.project-name}"
   cluster_id         = "${module.cluster.id}"
