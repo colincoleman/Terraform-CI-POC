@@ -1,15 +1,3 @@
-module "vpc" {
-  source        = "github.com/itsdalmo/tf-modules//ec2/vpc?ref=0.1.0"
-  prefix        = "${var.env-name}-${var.project-name}"
-  cidr_block    = "${var.vpc-cidr_block}"
-  dns_hostnames = "true"
-
-  tags {
-    environment = "${var.env-name}"
-    terraform   = "true"
-  }
-}
-
 data "terraform_remote_state" "workshop-common-infrastructure" {
   backend = "s3"
 
@@ -21,23 +9,18 @@ data "terraform_remote_state" "workshop-common-infrastructure" {
   }
 }
 
-
-module "alb" {
-  source     = "github.com/itsdalmo/tf-modules//ec2/alb?ref=0.1.0"
+module "lb" {
+  source     = "github.com/TeliaSoneraNorge/divx-terraform-modules//ec2/lb?ref=0.3.4"
   prefix     = "${var.env-name}-${var.project-name}"
+  type       = "application"
   internal   = "false"
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = ["${module.vpc.public_subnet_ids}"]
-}
-
-resource "null_resource" "alb_exists" {
-  triggers {
-    alb_name = "${module.alb.arn}"
-  }
+  vpc_id     = "${data.terraform_remote_state.workshop-common-infrastructure.vpc_id}"
+  subnet_ids = ["${data.terraform_remote_state.workshop-common-infrastructure.vpc_public_subnet_ids}"]
+  tags       = "${var.tags}"
 }
 
 resource "aws_security_group_rule" "ingress_80" {
-  security_group_id = "${module.alb.security_group_id}"
+  security_group_id = "${module.lb.security_group_id}"
   type              = "ingress"
   protocol          = "tcp"
   from_port         = "80"
@@ -46,11 +29,19 @@ resource "aws_security_group_rule" "ingress_80" {
 }
 
 module "cluster" {
-  source        = "github.com/itsdalmo/tf-modules//container/cluster?ref=0.1.0"
-  prefix        = "${var.env-name}-${var.project-name}"
-  vpc_id        = "${module.vpc.vpc_id}"
-  subnet_ids    = ["${module.vpc.public_subnet_ids}"]
-  instance_type = "${var.cluster_instance_type}"
+  source         = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/cluster?ref=091b7a1"
+  prefix         = "${var.env-name}-${var.project-name}"
+  vpc_id         = "${data.terraform_remote_state.workshop-common-infrastructure.vpc_id}"
+  subnet_ids     = ["${data.terraform_remote_state.workshop-common-infrastructure.vpc_private_subnet_ids}"]
+  ingress_length = 1
+
+  ingress {
+    "0" = "${module.lb.security_group_id}"
+  }
+
+  tags           = "${var.tags}"
+  instance_type  = "${var.cluster_instance_type}"
+  instance_count = "${var.cluster_instance_count}"
 }
 
 resource "aws_cloudwatch_log_group" "main" {
@@ -63,7 +54,7 @@ resource "aws_ecs_task_definition" "terraform-ci-poc" {
   container_definitions = <<EOF
 [
   {
-    "name": "${var.project-name}",
+    "name": "${var.env-name}-${var.project-name}",
     "image": "${var.repository_uri}:latest",
     "cpu": 256,
     "memory": 512,
@@ -78,7 +69,7 @@ resource "aws_ecs_task_definition" "terraform-ci-poc" {
       "logDriver": "awslogs",
       "options": {
         "awslogs-group": "${aws_cloudwatch_log_group.main.name}",
-        "awslogs-region": "${var.region}"
+        "awslogs-region": "eu-west-1"
       }
     }
   }
@@ -87,88 +78,43 @@ EOF
 }
 
 module "terraform-ci-service" {
-  source = "github.com/baardl/tf-modules//container/service"
+  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/service?ref=091b7a1"
 
-  prefix             = "${var.project-name}"
-  environment        = "${var.env-name}"
-  vpc_id             = "${module.vpc.vpc_id}"
+  prefix             = "${var.env-name}-${var.project-name}"
   cluster_id         = "${module.cluster.id}"
-  cluster_sg         = "${module.cluster.security_group_id}"
   cluster_role       = "${module.cluster.role_id}"
-  load_balancer_name = "${module.alb.name}"
-  load_balancer_sg   = "${module.alb.security_group_id}"
   task_definition    = "${aws_ecs_task_definition.terraform-ci-poc.arn}"
   task_log_group_arn = "${aws_cloudwatch_log_group.main.arn}"
-  target_group_arn   = "${aws_alb_target_group.terraform-ci-poc-tg.arn}"
-  container_count    = "1"
+  container_count    = "2"
 
-  port_mapping = {
-    "5050" = "5050"
+  load_balancer {
+    target_group_arn = "${module.targetHTTP.target_group_arn}"
+    container_name   = "${var.env-name}-${var.project-name}"
+    container_port   = "${module.targetHTTP.container_port}"
   }
+
+  tags = "${var.tags}"
 }
 
-resource "aws_alb_target_group" "terraform-ci-poc-tg" {
-  depends_on = ["null_resource.alb_exists"]
-  name       = "${var.project-name}-tg"
-  port       = 5050
-  protocol   = "HTTP"
-  vpc_id     = "${module.vpc.vpc_id}"
+module "targetHTTP" {
+  source = "github.com/TeliaSoneraNorge/divx-terraform-modules//container/target"
 
-  health_check = {
-    interval            = 30
-    path                = "/"
-    port                = "traffic-port"
-    protocol            = "HTTP"
-    timeout             = 5
-    healthy_threshold   = 5
-    unhealthy_threshold = 2
-    matcher             = "200,202"
+  prefix            = "${var.project-name}"
+  vpc_id            = "${data.terraform_remote_state.workshop-common-infrastructure.vpc_id}"
+  load_balancer_arn = "${module.lb.arn}"
+
+  target {
+    protocol = "HTTP"
+    port     = "5050"
+    health   = "HTTP:traffic-port/"
   }
-}
 
-/*
-variable "certificate_arn" {
-  default = "arn:aws:acm:eu-west-1:276208424594:certificate/b9ebb5a8-ffae-4d75-8492-2d19e573e7cf"
-}
-*/
+  listeners = [{
+    protocol = "HTTP"
+    port     = "80"
+  }]
 
-resource "aws_alb_listener" "https" {
-  load_balancer_arn = "${module.alb.arn}"
-  port              = "80"
-  protocol          = "HTTP"
-#  ssl_policy        = "ELBSecurityPolicy-2015-05"
-#  certificate_arn   = "${var.certificate_arn}"
-
-  default_action {
-    target_group_arn = "${aws_alb_target_group.terraform-ci-poc-tg.arn}"
-    type             = "forward"
-  }
-}
-
-/*
-data "aws_route53_zone" "iot-zone" {
-  name         = "staging.api.ss.telia.io"
-  private_zone = false
-}
-*/
-
-/*
-resource "aws_route53_record" "terraform-ci-poc" {
-  zone_id = "${data.aws_route53_zone.iot-zone.zone_id}"
-  name    = "${var.env-name}-terraform-ci-poc.${data.aws_route53_zone.iot-zone.name}"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${module.alb.dns_name}"]
-}
-*/
-
-resource "aws_security_group_rule" "dynamic_port_mapping" {
-  type                     = "ingress"
-  security_group_id        = "${module.cluster.security_group_id}"
-  protocol                 = "tcp"
-  from_port                = 32768
-  to_port                  = 65535
-  source_security_group_id = "${module.alb.security_group_id}"
+  tags = "${var.tags}"
 }
 
 resource "aws_key_pair" "ssh_key_for_cluster" {
@@ -177,10 +123,10 @@ resource "aws_key_pair" "ssh_key_for_cluster" {
 }
 
 module "bastion" {
-  source     = "github.com/itsdalmo/tf-modules//bastion"
+  source     = "github.com/TeliaSoneraNorge/divx-terraform-modules//bastion?ref=0.3.4"
   prefix     = "${var.env-name}-${var.project-name}"
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = "${module.vpc.public_subnet_ids}"
+  vpc_id     = "${data.terraform_remote_state.workshop-common-infrastructure.vpc_id}"
+  subnet_ids = "${data.terraform_remote_state.workshop-common-infrastructure.vpc_public_subnet_ids}"
   pem_bucket = "tn-lab-config"
   pem_path   = "${var.env-name}-${var.project-name}.pem"
 
