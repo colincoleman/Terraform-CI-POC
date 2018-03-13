@@ -1,3 +1,11 @@
+resource_types:
+- name: docker-image-resource
+  type: docker-image
+  privileged: true
+  source:
+    repository: itsdalmo/docker-image-resource
+    tag: latest
+
 resources:
   - name: git-repo
     type: git
@@ -7,11 +15,12 @@ resources:
       private_key: ((terraform-ci-poc-git-deploy-key))
 
   - name: terraform-ci-poc-docker-image
-    type: docker-image
+    type: docker-image-resource
     source:
-      repository: 653090749433.dkr.ecr.eu-west-1.amazonaws.com/terraform-ci-poc
-      aws_access_key_id: ((machineuserkey))
-      aws_secret_access_key: ((machineusersecret))
+       repository: 653090749433.dkr.ecr.eu-west-1.amazonaws.com/terraform-ci-poc
+       aws_access_key_id: ((telia-divx-xqb-dev-access-key))
+       aws_secret_access_key: ((telia-divx-xqb-dev-secret-key))
+       aws_session_token: ((telia-divx-xqb-dev-session-token))
 
 
 
