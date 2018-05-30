@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 module "vpc" {
-  source          = "github.com/TeliaSoneraNorge/telia-terraform-modules//ec2/vpc?ref=b636148"
+  source          = "github.com/TeliaSoneraNorge/telia-terraform-modules//ec2/vpc?ref=2018.05.30.1"
   prefix          = "${var.prefix}"
   cidr_block      = "${var.vpc-cidr_block}"
   private_subnets = "${var.private_subnet_count}"
@@ -10,7 +10,7 @@ module "vpc" {
 }
 
 module "lb" {
-  source     = "github.com/TeliaSoneraNorge/telia-terraform-modules//ec2/lb?ref=b636148"
+  source     = "github.com/TeliaSoneraNorge/telia-terraform-modules//ec2/lb?ref=2018.05.30.1"
   prefix     = "${var.prefix}"
   type       = "application"
   internal   = "false"
@@ -40,9 +40,9 @@ resource "aws_security_group_rule" "ingress_80" {
 }
 
 module "cluster" {
-  source              = "github.com/TeliaSoneraNorge/telia-terraform-modules//ecs/spotfleet-cluster?ref=b636148"
+  source              = "github.com/TeliaSoneraNorge/telia-terraform-modules//ecs/spotfleet?ref=2018.05.30.1"
   prefix              = "${var.prefix}"
-  subnets             = "${module.vpc.private_subnet_ids}"
+  subnet_ids          = "${module.vpc.private_subnet_ids}"
   subnet_count        = "3"
   target_capacity     = 3
   allocation_strategy = "lowestPrice"
@@ -54,7 +54,7 @@ module "cluster" {
 }
 
 module "terraform-ci-poc-service" {
-  source          = "github.com/TeliaSoneraNorge/divx-terraform-modules//ecs/service?ref=b636148"
+  source          = "github.com/TeliaSoneraNorge/telia-terraform-modules//ecs/service?ref=2018.05.30.1"
   prefix          = "${var.prefix}"
   vpc_id          = "${module.vpc.vpc_id}"
   cluster_id      = "${module.cluster.id}"
@@ -74,4 +74,11 @@ module "terraform-ci-poc-service" {
 
   task_definition_image = "${var.repository_uri}:latest"
   task_container_count  = "2"
+}
+
+module "agent-policy" {
+  source = "github.com/TeliaSoneraNorge/telia-terraform-modules//ssm/agent-policy?ref=2018.05.30.1"
+  prefix = "${var.prefix}"
+  role   = "${module.cluster.role_name}"
+  tags   = "${var.tags}"
 }
