@@ -1,22 +1,25 @@
 data "aws_caller_identity" "current" {}
 
 module "vpc" {
-  source          = "github.com/TeliaSoneraNorge/telia-terraform-modules//ec2/vpc?ref=2018.05.30.1"
-  prefix          = "${var.prefix}"
-  cidr_block      = "${var.vpc-cidr_block}"
-  private_subnets = "${var.private_subnet_count}"
-  dns_hostnames   = "true"
-  tags            = "${var.tags}"
+  source               = "telia-oss/vpc/aws"
+  version              = "0.2.0"
+  name_prefix          = "${var.prefix}"
+  cidr_block           = "${var.vpc-cidr_block}"
+  private_subnet_count = "${var.private_subnet_count}"
+  create_nat_gateways  = "true"
+  enable_dns_hostnames = "true"
+  tags                 = "${var.tags}"
 }
 
 module "lb" {
-  source     = "github.com/TeliaSoneraNorge/telia-terraform-modules//ec2/lb?ref=2018.05.30.1"
-  prefix     = "${var.prefix}"
-  type       = "application"
-  internal   = "false"
-  vpc_id     = "${module.vpc.vpc_id}"
-  subnet_ids = ["${module.vpc.public_subnet_ids}"]
-  tags       = "${var.tags}"
+  source      = "telia-oss/loadbalancer/aws"
+  version     = "0.1.1"
+  name_prefix = "${var.prefix}"
+  type        = "application"
+  internal    = "false"
+  vpc_id      = "${module.vpc.vpc_id}"
+  subnet_ids  = ["${module.vpc.public_subnet_ids}"]
+  tags        = "${var.tags}"
 }
 
 resource "aws_lb_listener" "main" {
@@ -40,25 +43,27 @@ resource "aws_security_group_rule" "ingress_80" {
 }
 
 module "cluster" {
-  source              = "github.com/TeliaSoneraNorge/telia-terraform-modules//ecs/spotfleet?ref=2018.05.30.1"
-  prefix              = "${var.prefix}"
+  source              = "telia-oss/ecs/aws//modules/cluster"
+  version             = "0.6.1"
+  name_prefix         = "${var.prefix}"
   subnet_ids          = "${module.vpc.private_subnet_ids}"
-  subnet_count        = "3"
-  target_capacity     = 3
-  allocation_strategy = "lowestPrice"
+  min_size            = "1"
+  instance_type       = "t3.small"
   tags                = "${var.tags}"
-  spot_price          = "0.02"
   load_balancers      = ["${module.lb.security_group_id}"]
   load_balancer_count = "1"
   vpc_id              = "${module.vpc.vpc_id}"
+  instance_ami        = "ami-0651de2fa6ccf6d26"
+  instance_key        = "xqb-dev"
 }
 
 module "terraform-ci-poc-service" {
-  source          = "github.com/TeliaSoneraNorge/telia-terraform-modules//ecs/service?ref=2018.05.30.1"
-  prefix          = "${var.prefix}"
-  vpc_id          = "${module.vpc.vpc_id}"
-  cluster_id      = "${module.cluster.id}"
-  cluster_role_id = "${module.cluster.role_id}"
+  source            = "telia-oss/ecs/aws//modules/service"
+  version           = "0.3.0"
+  name_prefix       = "${var.prefix}"
+  vpc_id            = "${module.vpc.vpc_id}"
+  cluster_id        = "${module.cluster.id}"
+  cluster_role_name = "${module.cluster.role_name}"
 
   target {
     protocol      = "HTTP"
@@ -73,12 +78,12 @@ module "terraform-ci-poc-service" {
   }
 
   task_definition_image = "${var.repository_uri}:latest"
-  task_container_count  = "2"
+  desired_count         = "2"
 }
 
 module "agent-policy" {
-  source = "github.com/TeliaSoneraNorge/telia-terraform-modules//ssm/agent-policy?ref=2018.05.30.1"
-  prefix = "${var.prefix}"
-  role   = "${module.cluster.role_name}"
-  tags   = "${var.tags}"
+  source      = "telia-oss/ssm-agent-policy/aws"
+  version     = "0.1.1"
+  name_prefix = "${var.prefix}"
+  role        = "${module.cluster.role_name}"
 }
