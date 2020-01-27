@@ -217,7 +217,7 @@
     </pluginRepositories>
 
 <properties>
-    <ratpack.version>1.1.1</ratpack.version>
+    <ratpack.version>1.7.6</ratpack.version>
 </properties>
 <dependencies>
     <dependency>
