@@ -189,7 +189,7 @@
                                 </filter>
                             </filters>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <!-- http://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
@@ -217,7 +217,7 @@
     </pluginRepositories>
 
 <properties>
-    <ratpack.version>1.1.1</ratpack.version>
+    <ratpack.version>1.4.0</ratpack.version>
 </properties>
 <dependencies>
     <dependency>
